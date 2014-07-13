@@ -29,7 +29,7 @@
 
 (defprotocol GRAPH
   (vertices [this])
-  (vertex [index])
+  (vertex [this index])
   (edges [this])
   (outbound-edges [this index])
   (inbound-edges [this index]))
@@ -98,12 +98,13 @@
               (range (count points)))))
   GRAPH
   (vertices [_] points)
-  (vertex [index]
+  (vertex [_ index]
     (get points index))
-  (edges [_]
+  (edges [this]
     (let [size (count points)]
-      (for [i size]
-        [(vertex i) (vertex (mod (inc i) size))])))
+      (for [i (range size)]
+        [(vertex this i) (vertex this
+                                 (mod (inc i) size))])))
   TRANSFORMABLE)
 
 (defn point
@@ -118,4 +119,4 @@
 (defn polygon
   ([points] (polygon points nil))
   ([points holes]
-     (->Polygon (map point points) holes)))
+     (->Polygon (mapv point points) holes)))
